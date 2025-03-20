@@ -7,7 +7,7 @@ on:
   pull_request:
     branches:
       - main
-#ass
+
 jobs:
   lint:
     runs-on: ubuntu-latest
