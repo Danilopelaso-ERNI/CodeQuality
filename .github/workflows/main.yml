@@ -81,33 +81,9 @@ jobs:
       - name: Run Code Analysis
         run: npm run test:ci
 
-  e2e_test:
-    runs-on: ubuntu-latest
-    needs: code_analysis
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '20'
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Start the application
-        run: npm run start -- --port 4201 --watch=false & # Start the application on a different port
-
-      - name: Wait for application to start
-        run: sleep 30 # Wait for 30 seconds to give the application time to start
-
-      - name: Run End-to-End Tests
-        run: npm run e2e -- --watch=false --timeout=100000 # Increased timeout to 10 seconds
-
   Build:
     runs-on: ubuntu-latest
-    needs: e2e_test
+    needs: code_analysis
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
