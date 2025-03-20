@@ -20,7 +20,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20' # Updated Node.js version
+          node-version: '20' # Updated Node.js version to 20
 
       - name: Install dependencies
         run: npm install
@@ -39,7 +39,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20' # Updated Node.js version
+          node-version: '20' # Updated Node.js version to 20
 
       - name: Install dependencies
         run: npm install
@@ -58,7 +58,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20' # Updated Node.js version
+          node-version: '20' # Updated Node.js version to 20
 
       - name: Install dependencies
         run: npm install
@@ -77,7 +77,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20' # Updated Node.js version
+          node-version: '20' # Updated Node.js version to 20
 
       - name: Install dependencies
         run: npm install
@@ -96,7 +96,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20' # Updated Node.js version
+          node-version: '20' # Updated Node.js version to 20
 
       - name: Install dependencies
         run: npm install
@@ -105,7 +105,7 @@ jobs:
         run: npm run start -- --watch=false & # Start the application in the background
 
       - name: Run E2E tests
-        run: npm run e2e -- --watch=false # Adjust if necessary
+        run: npm run e2e # Removed the --protractor-config argument
 
   build:
     runs-on: ubuntu-latest
@@ -118,7 +118,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '18' # Updated Node.js version
+          node-version: '20' # Updated Node.js version to 20
 
       - name: Install dependencies
         run: npm install
@@ -126,8 +126,15 @@ jobs:
       - name: Build the application
         run: npm run build
 
+      - name: Create ZIP of build artifacts
+        run: |
+          zip -r build-artifact.zip ./dist # Create a ZIP file of the build output
+
       - name: Upload build artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v3 # Updated to v3
         with:
           name: build-artifact
-          path: ./dist # Adjust this path if your build output is in a different location
+          path: build-artifact.zip # Upload the ZIP file
+
+      - name: Echo Name
+        run: echo "Build artifact created by Danilo Pelaso Jr"
