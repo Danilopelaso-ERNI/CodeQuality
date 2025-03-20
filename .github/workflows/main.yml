@@ -81,9 +81,27 @@ jobs:
       - name: Run Code Analysis
         run: npm run test:ci
 
-  Build:
+  e2e:
     runs-on: ubuntu-latest
     needs: code_analysis
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run E2E Tests
+        run: npm run e2e
+
+  Build:
+    runs-on: ubuntu-latest
+    needs: e2e
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -107,3 +125,13 @@ jobs:
         with:
           name: Danilo
           path: Danilo.zip
+
+  Danilo Pelaso:
+    runs-on: ubuntu-latest
+    needs: Build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Notify completion
+        run: echo "Cheers CI!!!!"
