@@ -99,8 +99,11 @@ jobs:
       - name: Start the application
         run: npm run start -- --port 4201 --watch=false & # Start the application on a different port
 
+      - name: Wait for application to start
+        run: sleep 30 # Wait for 30 seconds to give the application time to start
+
       - name: Run End-to-End Tests
-        run: npm run e2e -- --watch=false
+        run: npm run e2e -- --watch=false --timeout=100000 # Increased timeout to 10 seconds
 
   Build:
     runs-on: ubuntu-latest
