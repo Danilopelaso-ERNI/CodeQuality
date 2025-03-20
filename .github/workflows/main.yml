@@ -7,12 +7,10 @@ on:
   pull_request:
     branches:
       - main
-  workflow_dispatch: # Allows manual triggering
 
 jobs:
   lint:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -20,18 +18,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20' # Updated Node.js version to 20
+          node-version: '20'
 
       - name: Install dependencies
         run: npm install
 
-      - name: Run lint
+      - name: Run Linting
         run: npm run lint
 
   prettier:
     runs-on: ubuntu-latest
-    needs: lint # This job will run after the lint job
-
+    needs: lint
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -39,18 +36,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20' # Updated Node.js version to 20
+          node-version: '20'
 
       - name: Install dependencies
         run: npm install
 
-      - name: Check formatting with Prettier
+      - name: Run Prettier Check
         run: npm run prettier:check
 
-  unit-test:
+  unit_test:
     runs-on: ubuntu-latest
-    needs: prettier # This job will run after the prettier job
-
+    needs: prettier
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -58,18 +54,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20' # Updated Node.js version to 20
+          node-version: '20'
 
       - name: Install dependencies
         run: npm install
 
-      - name: Run unit tests
-        run: npm run test -- --watch=false --browsers=ChromeHeadless --code-coverage
+      - name: Run Unit Tests
+        run: npm run test -- --watch=false --browsers=ChromeHeadless
 
-  code-analysis:
+  code_analysis:
     runs-on: ubuntu-latest
-    needs: unit-test # This job will run after the unit-test job
-
+    needs: unit_test
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -77,18 +72,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20' # Updated Node.js version to 20
+          node-version: '20'
 
       - name: Install dependencies
         run: npm install
 
-      - name: Run code analysis
-        run: npm run test:ci # Assuming this script runs lint and tests together
+      - name: Run Code Analysis
+        run: npm run test:ci
 
-  e2e:
+  e2e_test:
     runs-on: ubuntu-latest
-    needs: code-analysis # This job will run after the code-analysis job
-
+    needs: code_analysis
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -96,45 +90,38 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20' # Updated Node.js version to 20
+          node-version: '20'
 
       - name: Install dependencies
         run: npm install
 
-      - name: Start the application
-        run: npm run start -- --watch=false & # Start the application in the background
+      - name: Run End-to-End Tests
+        run: npm run e2e -- --watch=false
 
-      - name: Run E2E tests
-        run: npm run e2e # Removed the --protractor-config argument
-
-  build:
+  notify:
     runs-on: ubuntu-latest
-    needs: e2e # This job will run after the e2e job
-
+    needs: e2e_test
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v2
-        with:
-          node-version: '20' # Updated Node.js version to 20
+      - name: Notify completion
+        run: echo "Cheers Danilo!!!!"
+
+      - name: List directory contents
+        run: ls -la
 
       - name: Install dependencies
         run: npm install
 
       - name: Build the application
-        run: npm run build
+        run: npm run build --prod
 
-      - name: Create ZIP of build artifacts
-        run: |
-          zip -r build-artifact.zip ./dist # Create a ZIP file of the build output
+      - name: Create zip file
+        run: zip -r Danilo.zip . dist/
 
-      - name: Upload build artifact
-        uses: actions/upload-artifact@v3 # Updated to v3
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: build-artifact
-          path: build-artifact.zip # Upload the ZIP file
-
-      - name: Echo Name
-        run: echo "Build artifact created by Danilo Pelaso Jr"
+          name: Danilo
+          path: Danilo.zip
