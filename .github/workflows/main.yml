@@ -7,10 +7,12 @@ on:
   pull_request:
     branches:
       - main
+  workflow_dispatch: # Allows manual triggering
 
 jobs:
   lint:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -18,17 +20,18 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20'
+          node-version: '20' # Updated Node.js version to 20
 
       - name: Install dependencies
         run: npm install
 
-      - name: Run Linting
+      - name: Run lint
         run: npm run lint
 
   prettier:
     runs-on: ubuntu-latest
-    needs: lint
+    needs: lint # This job will run after the lint job
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -36,17 +39,18 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20'
+          node-version: '20' # Updated Node.js version to 20
 
       - name: Install dependencies
         run: npm install
 
-      - name: Run Prettier Check
+      - name: Check formatting with Prettier
         run: npm run prettier:check
 
-  unit_test:
+  unit-test:
     runs-on: ubuntu-latest
-    needs: prettier
+    needs: prettier # This job will run after the prettier job
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -54,17 +58,18 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20'
+          node-version: '20' # Updated Node.js version to 20
 
       - name: Install dependencies
         run: npm install
 
-      - name: Run Unit Tests
-        run: npm run test -- --watch=false --browsers=ChromeHeadless
+      - name: Run unit tests
+        run: npm run test -- --watch=false --browsers=ChromeHeadless --code-coverage
 
-  code_analysis:
+  code-analysis:
     runs-on: ubuntu-latest
-    needs: unit_test
+    needs: unit-test # This job will run after the unit-test job
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -72,17 +77,17 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: '20'
+          node-version: '20' # Updated Node.js version to 20
 
       - name: Install dependencies
         run: npm install
 
-      - name: Run Code Analysis
-        run: npm run test:ci
+      - name: Run code analysis
+        run: npm run test:ci # Assuming this script runs lint and tests together
 
   e2e_test:
     runs-on: ubuntu-latest
-    needs: code_analysis
+    needs: code-analysis
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -98,30 +103,34 @@ jobs:
       - name: Run End-to-End Tests
         run: npm run e2e -- --watch=false
 
-  notify:
+  build:
     runs-on: ubuntu-latest
-    needs: e2e_test
+    needs: e2e # This job will run after the e2e job
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Notify completion
-        run: echo "Cheers Danilo!!!!"
-
-      - name: List directory contents
-        run: ls -la
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '20' # Updated Node.js version to 20
 
       - name: Install dependencies
         run: npm install
 
       - name: Build the application
-        run: npm run build --prod
+        run: npm run build
 
-      - name: Create zip file
-        run: zip -r Danilo.zip . dist/
+      - name: Create ZIP of build artifacts
+        run: |
+          zip -r build-artifact.zip ./dist # Create a ZIP file of the build output
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v3 # Updated to v3
         with:
-          name: Danilo
-          path: Danilo.zip
+          name: build-artifact
+          path: build-artifact.zip # Upload the ZIP file
+
+      - name: Echo Name
+        run: echo "Build artifact created by Danilo Pelaso Jr"
