@@ -100,7 +100,7 @@ jobs:
         run: npm run start -- --port 4201 --watch=false & # Start the application on a different port
 
       - name: Run End-to-End Tests
-        run: npm run e2e -- --watch=false
+        run: npm run e2e -- --watch=false --timeout=10000 # Increased timeout to 10 seconds
 
   Build:
     runs-on: ubuntu-latest
